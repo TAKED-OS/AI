@@ -75,11 +75,10 @@
 
 Упрощённая диаграмма (все не показанные переходы ведут в qE):
 
-![Упрощённая диаграмма ДКА](diagram_simple.png)
+<img width="1132" height="328" alt="diagram_simple" src="https://github.com/user-attachments/assets/965b75dd-3302-4936-8792-eeb0b4ca0e71" />
 
 Полная диаграмма, включая все переходы в qE:
-
-![Полная диаграмма ДКА](diagram.png)
+<img width="1288" height="536" alt="diagram" src="https://github.com/user-attachments/assets/f41d50f4-cd76-4f56-a596-0c0ff2275fa3" />
 
 На схемах принимающее состояние q6 изображено двойной окружностью, ошибочное состояние qE — розовым цветом; пунктиром на полной схеме выделены переходы к ошибке.
 
