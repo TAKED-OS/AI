@@ -283,25 +283,3 @@ def parse_value(label: str, raw: str) -> float:
 ```powershell
 python -m unittest -v
 ```
-
-## 14. Структура проекта
-
-```text
-Weather_Mamdani_Lab4/
-├── README.md
-├── app.py
-├── fuzzy_model.py
-├── test_model.py
-├── requirements.txt
-└── Images/
-    ├── 01_main.png
-    ├── 02_memberships.png
-    ├── 03_rules.png
-    ├── 04_degrees.png
-    ├── 05_centroid.png
-    ├── 06_parameters.png
-    ├── 07_dry.png
-    └── 08_wet.png
-```
-
-> **Важно для GitHub:** папка `Images` должна находиться рядом с `README.md`. Изображения вставлены относительными Markdown-путями `![Подпись](Images/имя.png)`, поэтому отображаются непосредственно на странице репозитория. Не загружайте только `README.md` без папки `Images`.
