@@ -108,7 +108,7 @@ $Z=(S,S_0,S_G,R,C,f)$, где:
 | Обратный BFS | 6 | 19 | 38.3 | 3208 | Да |
 | Смешанный | 6 | 12 | 17.8 | 1912 | Да, проверено по BFS |
 
-[Измерения и пути, записанные программой](results/benchmark.json)
+[Измерения и пути, записанные программой](results/benchmark.md)
 
 ## Заключение
 
@@ -143,7 +143,6 @@ python Lab6/main.py
 """Compare state-space search strategies for the 4 L and 3 L jug problem."""
 
 import heapq
-import json
 import tracemalloc
 from collections import deque
 from pathlib import Path
@@ -275,6 +274,28 @@ def graph():
     return "```mermaid\n" + "\n".join(lines) + "\n```\n"
 
 
+
+def benchmark_markdown(results):
+    lines = [
+        "# Результаты поиска",
+        "",
+        "Время — медиана 501 запуска. Память — пик выделений Python за отдельный запуск.",
+        "",
+        "| Стратегия | Шаги | Посещено состояний | Время, мкс | Память, байт |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for result in results:
+        lines.append(
+            f"| {result['strategy']} | {result['steps']} | {result['visited']} | "
+            f"{result['median_us']:.3f} | {result['peak_bytes']} |"
+        )
+    lines += ["", "## Найденные пути", ""]
+    for result in results:
+        path = " → ".join(f"({x}, {y})" for x, y in result["path"])
+        lines.append(f"- **{result['strategy']}** — {path or 'путь отсутствует'}")
+    return "\n".join(lines) + "\n"
+
+
 def main():
     methods = {
         "DFS": lambda: blind(START, "DFS"),
@@ -299,7 +320,7 @@ def main():
                             median_us=round(median(samples) / 1000, 3), peak_bytes=peak))
     output = Path(__file__).with_name("results")
     output.mkdir(exist_ok=True)
-    (output / "benchmark.json").write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (output / "benchmark.md").write_text(benchmark_markdown(results), encoding="utf-8")
     (output / "graph.md").write_text(
         "# Граф пространства состояний\n\n"
         "F — наполнить, E — опустошить, P — перелить. Цифры обозначают объёмы кружек.\n\n"
