@@ -4,6 +4,7 @@ import argparse
 import csv
 import math
 import random
+import tempfile
 from pathlib import Path
 from statistics import mean
 
@@ -111,20 +112,22 @@ def main():
     parser.add_argument("--pm", type=float, default=0.05)
     parser.add_argument("--generations", type=int, default=30)
     parser.add_argument("--seed", type=int, default=23)
-    parser.add_argument("--output", type=Path, default=Path("results/custom"))
+    parser.add_argument("--output", type=Path, help="Каталог экспорта (по умолчанию временный)")
     parser.add_argument("--experiments", action="store_true")
     args = parser.parse_args()
     if not (2 <= args.population <= 20 and args.generations >= 30 and 0 <= args.pc <= 1 and 0 <= args.pm <= 1):
         parser.error("Требуется 2 ≤ N ≤ 20, G ≥ 30, 0 ≤ pc, pm ≤ 1")
+    output = args.output if args.output is not None else Path(tempfile.mkdtemp(prefix="lab5-"))
+    print(f"Каталог экспорта: {output}")
     if args.experiments:
         for name, n, pc, pm in [
             ("exp1", 4, .8, .05), ("exp2", 4, .4, .01),
             ("exp3", 4, .9, .15), ("exp4", 12, .8, .05),
         ]:
             print(name)
-            run(n, pc, pm, args.generations, args.seed, args.output / name)
+            run(n, pc, pm, args.generations, args.seed, output / name)
     else:
-        run(args.population, args.pc, args.pm, args.generations, args.seed, args.output)
+        run(args.population, args.pc, args.pm, args.generations, args.seed, output)
 
 
 if __name__ == "__main__":
