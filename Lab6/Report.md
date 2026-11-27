@@ -262,11 +262,19 @@ def reverse_adjacency():
 
 | Стратегия | Шаги | Посещено | Время, мкс | Пик, байт | Оптимальность из (0,0) |
 |---|---:|---:|---:|---:|---|
-| DFS | 6 | 7 | 10.1 | 1504 | Да, проверено по BFS. В общем случае без гарантии |
-| BFS | 6 | 13 | 18.6 | 1912 | Да |
-| A* | 6 | 11 | 47.6 | 2152 | Да |
-| Обратный BFS | 6 | 19 | 38.3 | 3208 | Да |
-| Смешанный | 6 | 12 | 17.8 | 1912 | Да, проверено по BFS |
+| DFS | 6 | 7 | 16.500 | 1504 | Да, проверено по BFS. В общем случае без гарантии |
+| BFS | 6 | 13 | 29.900 | 1912 | Да |
+| A* | 6 | 11 | 75.500 | 2152 | Да |
+| Обратный BFS | 6 | 19 | 61.300 | 3208 | Да |
+| Смешанный | 6 | 12 | 28.500 | 1912 | Да, проверено по BFS |
+
+### Вывод программы
+
+Скриншоты показывают текст реального запуска Python, отображённый в браузере. Время выполнения при повторном запуске может отличаться.
+
+![Таблица сравнения пяти стратегий](images/console-table.png)
+
+![Найденные пути для пяти стратегий](images/console-paths.png)
 
 ## Заключение
 
@@ -455,6 +463,22 @@ def benchmark_markdown(results):
     return "\n".join(lines) + "\n"
 
 
+def benchmark_console(results):
+    header = f"{'Стратегия':<13} │ {'Шаги':>4} │ {'Посещено':>8} │ {'Время, мкс':>10} │ {'Память, Б':>9}"
+    separator = "─" * 14 + "┼" + "─" * 6 + "┼" + "─" * 10 + "┼" + "─" * 12 + "┼" + "─" * 10
+    lines = ["Результаты поиска", "", header, separator]
+    for result in results:
+        lines.append(
+            f"{result['strategy']:<13} │ {result['steps']:>4} │ {result['visited']:>8} │ "
+            f"{result['median_us']:>10.3f} │ {result['peak_bytes']:>9}"
+        )
+    lines += ["", "Найденные пути"]
+    for result in results:
+        path = " → ".join(f"({x},{y})" for x, y in result["path"])
+        lines.append(f"{result['strategy']:<13}  {path or 'путь отсутствует'}")
+    return "\n".join(lines)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, help="Каталог экспорта измерений и графа")
@@ -480,7 +504,7 @@ def main():
         tracemalloc.stop()
         results.append(dict(strategy=name, path=path, visited=visited, steps=len(path)-1,
                             median_us=round(median(samples) / 1000, 3), peak_bytes=peak))
-    print(benchmark_markdown(results), end="")
+    print(benchmark_console(results))
     if args.output is not None:
         output = args.output
         output.mkdir(parents=True, exist_ok=True)

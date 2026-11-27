@@ -155,6 +155,22 @@ def benchmark_markdown(results):
     return "\n".join(lines) + "\n"
 
 
+def benchmark_console(results):
+    header = f"{'Стратегия':<13} │ {'Шаги':>4} │ {'Посещено':>8} │ {'Время, мкс':>10} │ {'Память, Б':>9}"
+    separator = "─" * 14 + "┼" + "─" * 6 + "┼" + "─" * 10 + "┼" + "─" * 12 + "┼" + "─" * 10
+    lines = ["Результаты поиска", "", header, separator]
+    for result in results:
+        lines.append(
+            f"{result['strategy']:<13} │ {result['steps']:>4} │ {result['visited']:>8} │ "
+            f"{result['median_us']:>10.3f} │ {result['peak_bytes']:>9}"
+        )
+    lines += ["", "Найденные пути"]
+    for result in results:
+        path = " → ".join(f"({x},{y})" for x, y in result["path"])
+        lines.append(f"{result['strategy']:<13}  {path or 'путь отсутствует'}")
+    return "\n".join(lines)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, help="Каталог экспорта измерений и графа")
@@ -180,7 +196,7 @@ def main():
         tracemalloc.stop()
         results.append(dict(strategy=name, path=path, visited=visited, steps=len(path)-1,
                             median_us=round(median(samples) / 1000, 3), peak_bytes=peak))
-    print(benchmark_markdown(results), end="")
+    print(benchmark_console(results))
     if args.output is not None:
         output = args.output
         output.mkdir(parents=True, exist_ok=True)
